@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruleta de Eventos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Vista de Configuración -->
+    <div id="config-view" class="view">
+        <div class="container">
+            <h1>🎯 Configuración de la Ruleta</h1>
+            
+            <div class="config-section">
+                <h2>Agregar Premio o Descuento</h2>
+                <form id="prize-form" class="prize-form">
+                    <div class="form-group">
+                        <label for="prize-name">Nombre del Premio:</label>
+                        <input type="text" id="prize-name" placeholder="Ej: 20% Descuento" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prize-probability">Probabilidad (peso):</label>
+                        <input type="number" id="prize-probability" min="1" max="100" placeholder="Ej: 30" required>
+                        <small>Mayor número = mayor probabilidad</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prize-color">Color:</label>
+                        <input type="color" id="prize-color" value="#FF6B6B" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <span id="form-btn-text">Agregar Premio</span>
+                    </button>
+                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary" style="display: none;">
+                        Cancelar
+                    </button>
+                </form>
+            </div>
+            
+            <div class="config-section">
+                <h2>Premios Configurados</h2>
+                <div id="prizes-list" class="prizes-list">
+                    <p class="empty-message">No hay premios configurados. Agrega al menos 2 para comenzar.</p>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="go-to-game-btn" class="btn btn-success btn-large" disabled>
+                    Ir a la Ruleta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vista de Juego -->
+    <div id="game-view" class="view" style="display: none;">
+        <div class="game-container">
+            <h1>🎡 Ruleta de Premios</h1>
+            
+            <div class="wheel-container">
+                <div class="wheel-pointer">▼</div>
+                <canvas id="wheel-canvas"></canvas>
+                <button id="spin-btn" class="spin-button">
+                    <span>GIRAR</span>
+                </button>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="back-to-config-btn" class="btn btn-secondary">
+                    ← Volver a Configuración
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Premio Ganado -->
+    <div id="winner-modal" class="modal">
+        <div class="modal-content">
+            <h2>🎉 ¡Felicidades!</h2>
+            <p class="winner-text">Has ganado:</p>
+            <div id="winner-prize" class="winner-prize"></div>
+            <button id="close-modal-btn" class="btn btn-primary btn-large">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="storage.js"></script>
+    <script src="wheel.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
