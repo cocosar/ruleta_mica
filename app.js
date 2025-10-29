@@ -37,6 +37,15 @@ function init() {
     cancelEditBtn.addEventListener('click', cancelEdit);
     closeModalBtn.addEventListener('click', closeModal);
     
+    // Event listeners para sugerencias de color
+    const colorSuggestions = document.querySelectorAll('.color-suggestion');
+    colorSuggestions.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const color = btn.getAttribute('data-color');
+            prizeColorInput.value = color;
+        });
+    });
+    
     // Cerrar modal al hacer clic fuera
     winnerModal.addEventListener('click', (e) => {
         if (e.target === winnerModal) {
@@ -234,12 +243,16 @@ function closeModal() {
 }
 
 /**
- * Genera un color aleatorio
+ * Genera un color aleatorio de la paleta verde oliva
  */
 function getRandomColor() {
     const colors = [
-        '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
-        '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788'
+        '#6c7d45', // Verde oliva principal
+        '#8a9a5c', // Verde oliva claro
+        '#4a5530', // Verde oliva oscuro
+        '#b8a76d', // Dorado/beige
+        '#c97850', // Terracota
+        '#d4d8c8'  // Verde claro/beige
     ];
     return colors[Math.floor(Math.random() * colors.length)];
 }

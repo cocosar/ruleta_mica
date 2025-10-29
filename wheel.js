@@ -139,7 +139,7 @@ class Wheel {
         this.ctx.arc(0, 0, 40, 0, Math.PI * 2);
         this.ctx.fillStyle = '#ffffff';
         this.ctx.fill();
-        this.ctx.strokeStyle = '#667eea';
+        this.ctx.strokeStyle = '#6c7d45';
         this.ctx.lineWidth = 4;
         this.ctx.stroke();
         

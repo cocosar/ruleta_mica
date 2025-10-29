@@ -28,7 +28,18 @@
                     
                     <div class="form-group">
                         <label for="prize-color">Color:</label>
-                        <input type="color" id="prize-color" value="#FF6B6B" required>
+                        <div class="color-picker-container">
+                            <input type="color" id="prize-color" value="#6c7d45" required>
+                            <div class="color-suggestions">
+                                <span class="suggestion-label">Sugerencias:</span>
+                                <button type="button" class="color-suggestion" data-color="#6c7d45" style="background: #6c7d45;" title="Verde Oliva"></button>
+                                <button type="button" class="color-suggestion" data-color="#8a9a5c" style="background: #8a9a5c;" title="Verde Oliva Claro"></button>
+                                <button type="button" class="color-suggestion" data-color="#4a5530" style="background: #4a5530;" title="Verde Oliva Oscuro"></button>
+                                <button type="button" class="color-suggestion" data-color="#b8a76d" style="background: #b8a76d;" title="Dorado/Beige"></button>
+                                <button type="button" class="color-suggestion" data-color="#c97850" style="background: #c97850;" title="Terracota"></button>
+                                <button type="button" class="color-suggestion" data-color="#d4d8c8" style="background: #d4d8c8;" title="Verde Claro"></button>
+                            </div>
+                        </div>
                     </div>
                     
                     <button type="submit" class="btn btn-primary">
@@ -58,13 +69,13 @@
     <!-- Vista de Juego -->
     <div id="game-view" class="view" style="display: none;">
         <div class="game-container">
-            <h1>🎡 Ruleta de Premios</h1>
+            <h1>Ruleta de Galopar 🐎</h1>
             
             <div class="wheel-container">
                 <div class="wheel-pointer">▼</div>
                 <canvas id="wheel-canvas"></canvas>
                 <button id="spin-btn" class="spin-button">
-                    <span>GIRAR</span>
+                    <img src="mini_logo.png" alt="Girar" class="spin-logo">
                 </button>
             </div>
             

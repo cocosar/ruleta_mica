@@ -6,22 +6,25 @@
 }
 
 :root {
-    --primary-color: #6366f1;
-    --secondary-color: #8b5cf6;
-    --success-color: #10b981;
-    --danger-color: #ef4444;
-    --bg-color: #f8fafc;
+    /* Paleta Verde Oliva */
+    --primary-color: #6c7d45;          /* Verde oliva principal */
+    --secondary-color: #8a9a5c;        /* Verde oliva claro */
+    --success-color: #6c7d45;          /* Verde oliva para éxito */
+    --danger-color: #c97850;           /* Terracota para peligro/eliminar */
+    --accent-color: #b8a76d;           /* Dorado/beige complementario */
+    --dark-olive: #4a5530;             /* Verde oliva oscuro */
+    --bg-color: #f5f6f0;               /* Fondo claro beige */
     --card-bg: #ffffff;
-    --text-color: #1e293b;
-    --text-light: #64748b;
-    --border-color: #e2e8f0;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+    --text-color: #2d3820;             /* Texto verde oscuro */
+    --text-light: #6b7456;             /* Texto claro oliva */
+    --border-color: #d4d8c8;           /* Borde verde claro */
+    --shadow: 0 4px 6px rgba(108, 125, 69, 0.15);
+    --shadow-lg: 0 10px 25px rgba(108, 125, 69, 0.2);
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #6c7d45 0%, #8a9a5c 50%, #b8a76d 100%);
     min-height: 100vh;
     color: var(--text-color);
     line-height: 1.6;
@@ -119,6 +122,45 @@ h2 {
     cursor: pointer;
 }
 
+.color-picker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.color-suggestions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.suggestion-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.color-suggestion {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 3px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.color-suggestion:hover {
+    transform: scale(1.15);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 8px rgba(108, 125, 69, 0.3);
+}
+
+.color-suggestion:active {
+    transform: scale(1.05);
+}
+
 .form-group small {
     color: var(--text-light);
     font-size: 0.875rem;
@@ -146,16 +188,16 @@ h2 {
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: #4f46e5;
+    background: #5a6b38;
 }
 
 .btn-secondary {
-    background: var(--text-light);
+    background: var(--secondary-color);
     color: white;
 }
 
 .btn-secondary:hover {
-    background: #475569;
+    background: #6b7d47;
 }
 
 .btn-success {
@@ -164,7 +206,7 @@ h2 {
 }
 
 .btn-success:hover:not(:disabled) {
-    background: #059669;
+    background: #5a6b38;
 }
 
 .btn-danger {
@@ -173,7 +215,7 @@ h2 {
 }
 
 .btn-danger:hover {
-    background: #dc2626;
+    background: #b45d3c;
 }
 
 .btn-large {
@@ -300,23 +342,31 @@ h2 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    border: 6px solid white;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 700;
+    background: linear-gradient(135deg, #6c7d45, #8a9a5c);
+    border: 4px solid white;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 20px rgba(108, 125, 69, 0.5);
     transition: all 0.3s;
     z-index: 5;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spin-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
 }
 
 .spin-button:hover:not(:disabled) {
-    transform: translate(-50%, -50%) scale(1.05);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 12px 30px rgba(108, 125, 69, 0.5);
 }
 
 .spin-button:active:not(:disabled) {
@@ -326,6 +376,10 @@ h2 {
 .spin-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.spin-button:disabled .spin-logo {
+    opacity: 0.5;
 }
 
 /* Modal */
@@ -407,9 +461,9 @@ h2 {
     }
 
     .spin-button {
-        width: 100px;
-        height: 100px;
-        font-size: 1rem;
+        width: 85px;
+        height: 85px;
+        padding: 12px;
     }
 
     .prize-item {
@@ -424,6 +478,16 @@ h2 {
 
     .action-buttons {
         flex-direction: column;
+    }
+
+    .color-suggestion {
+        width: 35px;
+        height: 35px;
+    }
+
+    .suggestion-label {
+        width: 100%;
+        font-size: 0.85rem;
     }
 }
 
