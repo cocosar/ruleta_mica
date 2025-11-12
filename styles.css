@@ -624,5 +624,97 @@ h2 {
     .config-section {
         margin-bottom: 20px;
     }
+    
+    /* Layout horizontal para la ruleta */
+    .game-container {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        grid-template-rows: auto 1fr auto;
+        gap: 20px;
+        align-items: center;
+        max-width: 100%;
+        height: calc(100vh - 30px);
+    }
+    
+    .game-container h1 {
+        grid-column: 1;
+        grid-row: 1;
+        text-align: left;
+        padding-left: 20px;
+        margin-bottom: 0;
+        font-size: 2.2rem;
+    }
+    
+    .wheel-container {
+        grid-column: 2;
+        grid-row: 1 / 4;
+        width: min(70vh, 600px);
+        height: min(70vh, 600px);
+        margin: 0;
+        justify-self: center;
+    }
+    
+    .game-container .action-buttons {
+        grid-column: 1;
+        grid-row: 2;
+        justify-content: flex-start;
+        padding-left: 20px;
+        margin-top: 0;
+    }
+    
+    .game-container .instagram-text {
+        grid-column: 1;
+        grid-row: 3;
+        text-align: left;
+        padding-left: 20px;
+        align-self: end;
+        margin-bottom: 20px;
+    }
+}
+
+/* Landscape en tablets más grandes */
+@media (orientation: landscape) and (min-width: 1025px) {
+    .game-container {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        grid-template-rows: auto 1fr auto;
+        gap: 30px;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .game-container h1 {
+        grid-column: 1;
+        grid-row: 1;
+        text-align: left;
+        padding-left: 40px;
+        margin-bottom: 0;
+    }
+    
+    .wheel-container {
+        grid-column: 2;
+        grid-row: 1 / 4;
+        width: min(80vh, 700px);
+        height: min(80vh, 700px);
+        margin: 0;
+        justify-self: center;
+    }
+    
+    .game-container .action-buttons {
+        grid-column: 1;
+        grid-row: 2;
+        justify-content: flex-start;
+        padding-left: 40px;
+        margin-top: 0;
+    }
+    
+    .game-container .instagram-text {
+        grid-column: 1;
+        grid-row: 3;
+        text-align: left;
+        padding-left: 40px;
+        align-self: end;
+    }
 }
 
