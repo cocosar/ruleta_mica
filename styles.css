@@ -343,6 +343,17 @@ h2 {
     margin-top: 30px;
 }
 
+/* Texto de Instagram */
+.instagram-text {
+    text-align: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
+}
+
 /* Contenedor de la Ruleta */
 .wheel-container {
     position: relative;
@@ -497,6 +508,11 @@ h2 {
         width: 85px;
         height: 85px;
         padding: 12px;
+    }
+
+    .instagram-text {
+        font-size: 1rem;
+        margin-top: 15px;
     }
 
     .prize-item {
