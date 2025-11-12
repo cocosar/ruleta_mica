@@ -229,22 +229,12 @@ h2 {
 }
 
 /* Lista de Premios */
-.prizes-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.prizes-header h2 {
-    margin-bottom: 0;
-}
-
-.order-controls {
-    display: flex;
-    gap: 10px;
+.drag-hint {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin: 10px 0 20px 0;
+    text-align: center;
+    font-style: italic;
 }
 
 .prizes-list {
@@ -269,6 +259,43 @@ h2 {
     border-radius: 12px;
     transition: all 0.3s;
     animation: slideIn 0.3s ease-out;
+    cursor: move;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.prize-item:active {
+    cursor: grabbing;
+}
+
+.prize-item.dragging {
+    opacity: 0.5;
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(108, 125, 69, 0.3);
+    border-color: var(--primary-color);
+}
+
+.prize-item.drag-over {
+    border-color: var(--primary-color);
+    background: rgba(108, 125, 69, 0.1);
+    transform: translateY(-2px);
+}
+
+.drag-handle {
+    font-size: 1.5rem;
+    color: var(--text-light);
+    cursor: grab;
+    user-select: none;
+    padding: 0 5px;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
 }
 
 .prize-order-controls {
@@ -517,19 +544,22 @@ h2 {
         padding: 12px;
     }
 
-    .prizes-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .order-controls {
-        width: 100%;
-        justify-content: flex-end;
+    .drag-hint {
+        font-size: 0.85rem;
     }
 
     .prize-item {
         flex-wrap: wrap;
         position: relative;
+        padding-top: 50px;
+    }
+
+    .drag-handle {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 2rem;
+        padding: 5px 10px;
     }
 
     .prize-order-controls {
@@ -541,9 +571,9 @@ h2 {
     }
 
     .btn-order {
-        width: 40px;
-        height: 40px;
-        font-size: 1.3rem;
+        width: 44px;
+        height: 44px;
+        font-size: 1.4rem;
     }
 
     .prize-color-preview {
@@ -586,6 +616,21 @@ h2 {
     .wheel-container {
         width: 550px;
         height: 550px;
+    }
+
+    .drag-handle {
+        font-size: 1.8rem;
+        padding: 0 8px;
+    }
+
+    .btn-order {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+    }
+
+    .prize-item {
+        padding: 18px;
     }
 }
 

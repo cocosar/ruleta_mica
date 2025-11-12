@@ -4,6 +4,9 @@
 let currentView = 'config';
 let editingPrizeId = null;
 let wheel = null;
+let draggedElement = null;
+let touchStartY = 0;
+let touchStartX = 0;
 
 // Elementos del DOM
 const configView = document.getElementById('config-view');
@@ -113,7 +116,10 @@ function renderPrizesList() {
         const isLast = index === prizes.length - 1;
         
         return `
-            <div class="prize-item" data-id="${prize.id}">
+            <div class="prize-item" data-id="${prize.id}" draggable="true">
+                <div class="drag-handle" title="Arrastra para reordenar">
+                    ⋮⋮
+                </div>
                 <div class="prize-order-controls">
                     <button class="btn btn-order" onclick="movePrizeUp(${prize.id})" 
                             ${isFirst ? 'disabled' : ''} title="Mover arriba">
@@ -140,6 +146,9 @@ function renderPrizesList() {
             </div>
         `;
     }).join('');
+    
+    // Agregar event listeners de drag and drop
+    initDragAndDrop();
 }
 
 /**
@@ -204,18 +213,174 @@ function movePrizeDown(id) {
 }
 
 /**
- * Mezcla aleatoriamente el orden de todos los premios
+ * Inicializa drag and drop para reordenar premios
  */
-function shufflePrizes() {
-    Storage.shufflePrizes();
-    renderPrizesList();
+function initDragAndDrop() {
+    const prizeItems = document.querySelectorAll('.prize-item');
+    
+    prizeItems.forEach(item => {
+        // Eventos de mouse (drag and drop HTML5)
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+        item.addEventListener('dragenter', handleDragEnter);
+        item.addEventListener('dragleave', handleDragLeave);
+        
+        // Eventos táctiles (para tablets y móviles)
+        item.addEventListener('touchstart', handleTouchStart, { passive: false });
+        item.addEventListener('touchmove', handleTouchMove, { passive: false });
+        item.addEventListener('touchend', handleTouchEnd);
+    });
 }
 
 /**
- * Invierte el orden de todos los premios
+ * Maneja el inicio del drag (mouse)
  */
-function reversePrizes() {
-    Storage.reversePrizes();
+function handleDragStart(e) {
+    draggedElement = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+/**
+ * Maneja el drag over (mouse)
+ */
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+/**
+ * Maneja cuando el elemento entra en la zona de drop
+ */
+function handleDragEnter(e) {
+    if (this !== draggedElement) {
+        this.classList.add('drag-over');
+    }
+}
+
+/**
+ * Maneja cuando el elemento sale de la zona de drop
+ */
+function handleDragLeave(e) {
+    this.classList.remove('drag-over');
+}
+
+/**
+ * Maneja el drop (mouse)
+ */
+function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+    
+    if (draggedElement !== this) {
+        // Reordenar elementos
+        reorderPrizeItems(draggedElement, this);
+    }
+    
+    return false;
+}
+
+/**
+ * Maneja el fin del drag (mouse)
+ */
+function handleDragEnd(e) {
+    this.classList.remove('dragging');
+    
+    // Remover todas las clases de drag-over
+    document.querySelectorAll('.prize-item').forEach(item => {
+        item.classList.remove('drag-over');
+    });
+}
+
+/**
+ * Maneja el inicio del touch (táctil)
+ */
+function handleTouchStart(e) {
+    // Solo permitir drag desde el drag-handle o el elemento principal
+    const touch = e.touches[0];
+    touchStartY = touch.clientY;
+    touchStartX = touch.clientX;
+    
+    draggedElement = this;
+    this.classList.add('dragging');
+}
+
+/**
+ * Maneja el movimiento del touch (táctil)
+ */
+function handleTouchMove(e) {
+    if (!draggedElement) return;
+    
+    e.preventDefault();
+    
+    const touch = e.touches[0];
+    const currentY = touch.clientY;
+    
+    // Encontrar elemento bajo el dedo
+    const elementBelow = document.elementFromPoint(touch.clientX, currentY);
+    const prizeItemBelow = elementBelow?.closest('.prize-item');
+    
+    // Remover clases previas
+    document.querySelectorAll('.prize-item').forEach(item => {
+        item.classList.remove('drag-over');
+    });
+    
+    // Agregar clase al elemento bajo el dedo
+    if (prizeItemBelow && prizeItemBelow !== draggedElement) {
+        prizeItemBelow.classList.add('drag-over');
+    }
+}
+
+/**
+ * Maneja el fin del touch (táctil)
+ */
+function handleTouchEnd(e) {
+    if (!draggedElement) return;
+    
+    const touch = e.changedTouches[0];
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    const prizeItemBelow = elementBelow?.closest('.prize-item');
+    
+    if (prizeItemBelow && prizeItemBelow !== draggedElement) {
+        reorderPrizeItems(draggedElement, prizeItemBelow);
+    }
+    
+    draggedElement.classList.remove('dragging');
+    document.querySelectorAll('.prize-item').forEach(item => {
+        item.classList.remove('drag-over');
+    });
+    
+    draggedElement = null;
+}
+
+/**
+ * Reordena los premios después de un drag and drop
+ */
+function reorderPrizeItems(draggedItem, targetItem) {
+    const allItems = Array.from(document.querySelectorAll('.prize-item'));
+    const draggedId = parseInt(draggedItem.getAttribute('data-id'));
+    const targetId = parseInt(targetItem.getAttribute('data-id'));
+    
+    // Obtener el orden actual de IDs
+    const currentOrder = allItems.map(item => parseInt(item.getAttribute('data-id')));
+    
+    // Encontrar índices
+    const draggedIndex = currentOrder.indexOf(draggedId);
+    const targetIndex = currentOrder.indexOf(targetId);
+    
+    // Reordenar array
+    currentOrder.splice(draggedIndex, 1);
+    currentOrder.splice(targetIndex, 0, draggedId);
+    
+    // Guardar nuevo orden
+    Storage.reorderPrizes(currentOrder);
     renderPrizesList();
 }
 

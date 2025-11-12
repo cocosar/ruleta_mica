@@ -171,6 +171,24 @@ const Storage = {
         prizes.reverse();
         this.savePrizes(prizes);
         return true;
+    },
+
+    /**
+     * Reordena los premios según un array de IDs
+     * @param {Array} orderedIds - Array de IDs en el nuevo orden
+     * @returns {boolean} True si se reordenó correctamente
+     */
+    reorderPrizes(orderedIds) {
+        const prizes = this.getPrizes();
+        const reordered = orderedIds.map(id => 
+            prizes.find(prize => prize.id === id)
+        ).filter(Boolean); // Filtrar nulls
+        
+        if (reordered.length === prizes.length) {
+            this.savePrizes(reordered);
+            return true;
+        }
+        return false;
     }
 };
 
