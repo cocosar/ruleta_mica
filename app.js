@@ -107,10 +107,23 @@ function renderPrizesList() {
     // Calcular probabilidad total para mostrar porcentajes
     const totalProbability = prizes.reduce((sum, p) => sum + p.probability, 0);
     
-    prizesList.innerHTML = prizes.map(prize => {
+    prizesList.innerHTML = prizes.map((prize, index) => {
         const percentage = ((prize.probability / totalProbability) * 100).toFixed(1);
+        const isFirst = index === 0;
+        const isLast = index === prizes.length - 1;
+        
         return `
             <div class="prize-item" data-id="${prize.id}">
+                <div class="prize-order-controls">
+                    <button class="btn btn-order" onclick="movePrizeUp(${prize.id})" 
+                            ${isFirst ? 'disabled' : ''} title="Mover arriba">
+                        ↑
+                    </button>
+                    <button class="btn btn-order" onclick="movePrizeDown(${prize.id})" 
+                            ${isLast ? 'disabled' : ''} title="Mover abajo">
+                        ↓
+                    </button>
+                </div>
                 <div class="prize-color-preview" style="background-color: ${prize.color}"></div>
                 <div class="prize-info">
                     <div class="prize-name">${prize.name}</div>
@@ -172,6 +185,38 @@ function deletePrize(id) {
             cancelEdit();
         }
     }
+}
+
+/**
+ * Mueve un premio hacia arriba en la lista
+ */
+function movePrizeUp(id) {
+    Storage.movePrizeUp(id);
+    renderPrizesList();
+}
+
+/**
+ * Mueve un premio hacia abajo en la lista
+ */
+function movePrizeDown(id) {
+    Storage.movePrizeDown(id);
+    renderPrizesList();
+}
+
+/**
+ * Mezcla aleatoriamente el orden de todos los premios
+ */
+function shufflePrizes() {
+    Storage.shufflePrizes();
+    renderPrizesList();
+}
+
+/**
+ * Invierte el orden de todos los premios
+ */
+function reversePrizes() {
+    Storage.reversePrizes();
+    renderPrizesList();
 }
 
 /**

@@ -107,6 +107,70 @@ const Storage = {
      */
     clearAll() {
         localStorage.removeItem(STORAGE_KEY);
+    },
+
+    /**
+     * Mueve un premio una posición hacia arriba
+     * @param {number} id - ID del premio a mover
+     * @returns {boolean} True si se movió correctamente
+     */
+    movePrizeUp(id) {
+        const prizes = this.getPrizes();
+        const index = prizes.findIndex(p => p.id === id);
+        
+        if (index > 0) {
+            // Intercambiar con el elemento anterior
+            [prizes[index - 1], prizes[index]] = [prizes[index], prizes[index - 1]];
+            this.savePrizes(prizes);
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Mueve un premio una posición hacia abajo
+     * @param {number} id - ID del premio a mover
+     * @returns {boolean} True si se movió correctamente
+     */
+    movePrizeDown(id) {
+        const prizes = this.getPrizes();
+        const index = prizes.findIndex(p => p.id === id);
+        
+        if (index !== -1 && index < prizes.length - 1) {
+            // Intercambiar con el elemento siguiente
+            [prizes[index], prizes[index + 1]] = [prizes[index + 1], prizes[index]];
+            this.savePrizes(prizes);
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Mezcla aleatoriamente el orden de los premios
+     * @returns {boolean} True si se mezcló correctamente
+     */
+    shufflePrizes() {
+        const prizes = this.getPrizes();
+        
+        // Algoritmo Fisher-Yates para mezclar aleatoriamente
+        for (let i = prizes.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [prizes[i], prizes[j]] = [prizes[j], prizes[i]];
+        }
+        
+        this.savePrizes(prizes);
+        return true;
+    },
+
+    /**
+     * Invierte el orden de los premios
+     * @returns {boolean} True si se invirtió correctamente
+     */
+    reversePrizes() {
+        const prizes = this.getPrizes();
+        prizes.reverse();
+        this.savePrizes(prizes);
+        return true;
     }
 };
 
