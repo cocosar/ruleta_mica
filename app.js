@@ -4,11 +4,6 @@
 let currentView = 'config';
 let editingPrizeId = null;
 let wheel = null;
-let draggedElement = null;
-let touchStartY = 0;
-let touchStartX = 0;
-let isDragging = false;
-let dragThreshold = 10; // píxeles de movimiento para iniciar drag
 
 // Elementos del DOM
 const configView = document.getElementById('config-view');
@@ -118,10 +113,7 @@ function renderPrizesList() {
         const isLast = index === prizes.length - 1;
         
         return `
-            <div class="prize-item" data-id="${prize.id}" draggable="true">
-                <div class="drag-handle" title="Arrastra para reordenar">
-                    ⋮⋮
-                </div>
+            <div class="prize-item" data-id="${prize.id}">
                 <div class="prize-order-controls">
                     <button class="btn btn-order" onclick="movePrizeUp(${prize.id})" 
                             ${isFirst ? 'disabled' : ''} title="Mover arriba">
@@ -148,9 +140,6 @@ function renderPrizesList() {
             </div>
         `;
     }).join('');
-    
-    // Agregar event listeners de drag and drop
-    initDragAndDrop();
 }
 
 /**
@@ -211,243 +200,6 @@ function movePrizeUp(id) {
  */
 function movePrizeDown(id) {
     Storage.movePrizeDown(id);
-    renderPrizesList();
-}
-
-/**
- * Inicializa drag and drop para reordenar premios
- */
-function initDragAndDrop() {
-    const prizeItems = document.querySelectorAll('.prize-item');
-    
-    prizeItems.forEach(item => {
-        // Eventos de mouse (drag and drop HTML5)
-        item.addEventListener('dragstart', handleDragStart);
-        item.addEventListener('dragover', handleDragOver);
-        item.addEventListener('drop', handleDrop);
-        item.addEventListener('dragend', handleDragEnd);
-        item.addEventListener('dragenter', handleDragEnter);
-        item.addEventListener('dragleave', handleDragLeave);
-        
-        // Prevenir drag en botones
-        const buttons = item.querySelectorAll('button');
-        buttons.forEach(btn => {
-            btn.addEventListener('touchstart', (e) => {
-                e.stopPropagation();
-            });
-            btn.addEventListener('mousedown', (e) => {
-                e.stopPropagation();
-            });
-        });
-        
-        // Eventos táctiles solo en el drag-handle y el item mismo
-        const dragHandle = item.querySelector('.drag-handle');
-        
-        if (dragHandle) {
-            dragHandle.addEventListener('touchstart', handleTouchStart, { passive: false });
-        }
-        
-        // También permitir desde el item completo (pero no desde botones)
-        item.addEventListener('touchstart', handleTouchStartItem, { passive: false });
-        item.addEventListener('touchmove', handleTouchMove, { passive: false });
-        item.addEventListener('touchend', handleTouchEnd);
-    });
-}
-
-/**
- * Maneja el inicio del drag (mouse)
- */
-function handleDragStart(e) {
-    draggedElement = this;
-    this.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', this.innerHTML);
-}
-
-/**
- * Maneja el drag over (mouse)
- */
-function handleDragOver(e) {
-    if (e.preventDefault) {
-        e.preventDefault();
-    }
-    e.dataTransfer.dropEffect = 'move';
-    return false;
-}
-
-/**
- * Maneja cuando el elemento entra en la zona de drop
- */
-function handleDragEnter(e) {
-    if (this !== draggedElement) {
-        this.classList.add('drag-over');
-    }
-}
-
-/**
- * Maneja cuando el elemento sale de la zona de drop
- */
-function handleDragLeave(e) {
-    this.classList.remove('drag-over');
-}
-
-/**
- * Maneja el drop (mouse)
- */
-function handleDrop(e) {
-    if (e.stopPropagation) {
-        e.stopPropagation();
-    }
-    
-    if (draggedElement !== this) {
-        // Reordenar elementos
-        reorderPrizeItems(draggedElement, this);
-    }
-    
-    return false;
-}
-
-/**
- * Maneja el fin del drag (mouse)
- */
-function handleDragEnd(e) {
-    this.classList.remove('dragging');
-    
-    // Remover todas las clases de drag-over
-    document.querySelectorAll('.prize-item').forEach(item => {
-        item.classList.remove('drag-over');
-    });
-}
-
-/**
- * Maneja el inicio del touch desde el drag-handle
- */
-function handleTouchStart(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const touch = e.touches[0];
-    touchStartY = touch.clientY;
-    touchStartX = touch.clientX;
-    isDragging = false;
-    
-    // Buscar el prize-item padre
-    draggedElement = e.target.closest('.prize-item');
-    if (draggedElement) {
-        draggedElement.style.transition = 'none';
-    }
-}
-
-/**
- * Maneja el inicio del touch desde el item completo
- */
-function handleTouchStartItem(e) {
-    // No activar si es un botón o un input
-    if (e.target.tagName === 'BUTTON' || 
-        e.target.tagName === 'INPUT' ||
-        e.target.closest('button')) {
-        return;
-    }
-    
-    const touch = e.touches[0];
-    touchStartY = touch.clientY;
-    touchStartX = touch.clientX;
-    isDragging = false;
-    
-    draggedElement = this;
-    draggedElement.style.transition = 'none';
-}
-
-/**
- * Maneja el movimiento del touch (táctil)
- */
-function handleTouchMove(e) {
-    if (!draggedElement) return;
-    
-    const touch = e.touches[0];
-    const currentY = touch.clientY;
-    const currentX = touch.clientX;
-    
-    // Calcular distancia movida
-    const deltaY = Math.abs(currentY - touchStartY);
-    const deltaX = Math.abs(currentX - touchStartX);
-    
-    // Solo iniciar drag si se movió más que el umbral
-    if (!isDragging && (deltaY > dragThreshold || deltaX > dragThreshold)) {
-        isDragging = true;
-        draggedElement.classList.add('dragging');
-        e.preventDefault();
-    }
-    
-    if (isDragging) {
-        e.preventDefault();
-        
-        // Encontrar elemento bajo el dedo
-        const elementBelow = document.elementFromPoint(currentX, currentY);
-        const prizeItemBelow = elementBelow?.closest('.prize-item');
-        
-        // Remover clases previas
-        document.querySelectorAll('.prize-item').forEach(item => {
-            item.classList.remove('drag-over');
-        });
-        
-        // Agregar clase al elemento bajo el dedo
-        if (prizeItemBelow && prizeItemBelow !== draggedElement) {
-            prizeItemBelow.classList.add('drag-over');
-        }
-    }
-}
-
-/**
- * Maneja el fin del touch (táctil)
- */
-function handleTouchEnd(e) {
-    if (!draggedElement) return;
-    
-    if (isDragging) {
-        const touch = e.changedTouches[0];
-        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-        const prizeItemBelow = elementBelow?.closest('.prize-item');
-        
-        if (prizeItemBelow && prizeItemBelow !== draggedElement) {
-            reorderPrizeItems(draggedElement, prizeItemBelow);
-        }
-    }
-    
-    if (draggedElement) {
-        draggedElement.classList.remove('dragging');
-        draggedElement.style.transition = '';
-    }
-    
-    document.querySelectorAll('.prize-item').forEach(item => {
-        item.classList.remove('drag-over');
-    });
-    
-    draggedElement = null;
-    isDragging = false;
-}
-
-/**
- * Reordena los premios después de un drag and drop
- */
-function reorderPrizeItems(draggedItem, targetItem) {
-    const allItems = Array.from(document.querySelectorAll('.prize-item'));
-    const draggedId = parseInt(draggedItem.getAttribute('data-id'));
-    const targetId = parseInt(targetItem.getAttribute('data-id'));
-    
-    // Obtener el orden actual de IDs
-    const currentOrder = allItems.map(item => parseInt(item.getAttribute('data-id')));
-    
-    // Encontrar índices
-    const draggedIndex = currentOrder.indexOf(draggedId);
-    const targetIndex = currentOrder.indexOf(targetId);
-    
-    // Reordenar array
-    currentOrder.splice(draggedIndex, 1);
-    currentOrder.splice(targetIndex, 0, draggedId);
-    
-    // Guardar nuevo orden
-    Storage.reorderPrizes(currentOrder);
     renderPrizesList();
 }
 

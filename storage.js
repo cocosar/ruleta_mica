@@ -145,50 +145,5 @@ const Storage = {
         return false;
     },
 
-    /**
-     * Mezcla aleatoriamente el orden de los premios
-     * @returns {boolean} True si se mezcló correctamente
-     */
-    shufflePrizes() {
-        const prizes = this.getPrizes();
-        
-        // Algoritmo Fisher-Yates para mezclar aleatoriamente
-        for (let i = prizes.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [prizes[i], prizes[j]] = [prizes[j], prizes[i]];
-        }
-        
-        this.savePrizes(prizes);
-        return true;
-    },
-
-    /**
-     * Invierte el orden de los premios
-     * @returns {boolean} True si se invirtió correctamente
-     */
-    reversePrizes() {
-        const prizes = this.getPrizes();
-        prizes.reverse();
-        this.savePrizes(prizes);
-        return true;
-    },
-
-    /**
-     * Reordena los premios según un array de IDs
-     * @param {Array} orderedIds - Array de IDs en el nuevo orden
-     * @returns {boolean} True si se reordenó correctamente
-     */
-    reorderPrizes(orderedIds) {
-        const prizes = this.getPrizes();
-        const reordered = orderedIds.map(id => 
-            prizes.find(prize => prize.id === id)
-        ).filter(Boolean); // Filtrar nulls
-        
-        if (reordered.length === prizes.length) {
-            this.savePrizes(reordered);
-            return true;
-        }
-        return false;
-    }
 };
 

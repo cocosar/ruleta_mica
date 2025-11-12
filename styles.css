@@ -229,20 +229,10 @@ h2 {
 }
 
 /* Lista de Premios */
-.drag-hint {
-    color: var(--text-light);
-    font-size: 0.9rem;
-    margin: 10px 0 20px 0;
-    text-align: center;
-    font-style: italic;
-}
-
 .prizes-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    position: relative;
-    overflow: visible;
 }
 
 .empty-message {
@@ -261,71 +251,6 @@ h2 {
     border-radius: 12px;
     transition: all 0.3s;
     animation: slideIn 0.3s ease-out;
-    cursor: move;
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    touch-action: pan-y;
-    -webkit-touch-callout: none;
-}
-
-.prize-item:active {
-    cursor: grabbing;
-}
-
-@media (hover: none) and (pointer: coarse) {
-    /* Estilos específicos para dispositivos táctiles */
-    .prize-item {
-        cursor: default;
-    }
-}
-
-.prize-item.dragging {
-    opacity: 0.5;
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(108, 125, 69, 0.3);
-    border-color: var(--primary-color);
-}
-
-.prize-item.drag-over {
-    border-color: var(--primary-color);
-    background: rgba(108, 125, 69, 0.1);
-    transform: translateY(-2px);
-}
-
-.drag-handle {
-    font-size: 1.5rem;
-    color: var(--text-light);
-    cursor: grab;
-    user-select: none;
-    padding: 0 5px;
-    line-height: 1;
-    letter-spacing: -2px;
-    touch-action: none;
-    -webkit-touch-callout: none;
-    min-width: 40px;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.drag-handle:active {
-    cursor: grabbing;
-    color: var(--primary-color);
-}
-
-@media (hover: none) and (pointer: coarse) {
-    /* Táctil: hacer el drag handle más grande */
-    .drag-handle {
-        font-size: 2rem;
-        min-width: 50px;
-        min-height: 50px;
-        padding: 0 10px;
-        cursor: default;
-    }
 }
 
 .prize-order-controls {
@@ -574,22 +499,10 @@ h2 {
         padding: 12px;
     }
 
-    .drag-hint {
-        font-size: 0.85rem;
-    }
-
     .prize-item {
         flex-wrap: wrap;
         position: relative;
         padding-top: 50px;
-    }
-
-    .drag-handle {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        font-size: 2rem;
-        padding: 5px 10px;
     }
 
     .prize-order-controls {
@@ -646,11 +559,6 @@ h2 {
     .wheel-container {
         width: 550px;
         height: 550px;
-    }
-
-    .drag-handle {
-        font-size: 1.8rem;
-        padding: 0 8px;
     }
 
     .btn-order {
