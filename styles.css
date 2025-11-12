@@ -346,12 +346,19 @@ h2 {
 /* Texto de Instagram */
 .instagram-text {
     text-align: center;
-    color: white;
+    color: white !important;
     font-size: 1.2rem;
     font-weight: 600;
     margin-top: 20px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     letter-spacing: 0.5px;
+    padding: 0 20px;
+}
+
+.instagram-text strong {
+    color: #2d5016;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* Contenedor de la Ruleta */
@@ -511,8 +518,15 @@ h2 {
     }
 
     .instagram-text {
-        font-size: 1rem;
+        font-size: 1rem !important;
         margin-top: 15px;
+        color: white !important;
+        padding: 0 15px;
+    }
+    
+    .instagram-text strong {
+        color: #2d5016 !important;
+        display: inline-block;
     }
 
     .prize-item {
@@ -585,6 +599,15 @@ h2 {
 
     .prize-item {
         padding: 18px;
+    }
+    
+    .instagram-text {
+        font-size: 1.1rem !important;
+        color: white !important;
+    }
+    
+    .instagram-text strong {
+        color: #2d5016 !important;
     }
 }
 
