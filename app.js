@@ -7,6 +7,8 @@ let wheel = null;
 let draggedElement = null;
 let touchStartY = 0;
 let touchStartX = 0;
+let isDragging = false;
+let dragThreshold = 10; // píxeles de movimiento para iniciar drag
 
 // Elementos del DOM
 const configView = document.getElementById('config-view');
@@ -227,8 +229,26 @@ function initDragAndDrop() {
         item.addEventListener('dragenter', handleDragEnter);
         item.addEventListener('dragleave', handleDragLeave);
         
-        // Eventos táctiles (para tablets y móviles)
-        item.addEventListener('touchstart', handleTouchStart, { passive: false });
+        // Prevenir drag en botones
+        const buttons = item.querySelectorAll('button');
+        buttons.forEach(btn => {
+            btn.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            });
+            btn.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+            });
+        });
+        
+        // Eventos táctiles solo en el drag-handle y el item mismo
+        const dragHandle = item.querySelector('.drag-handle');
+        
+        if (dragHandle) {
+            dragHandle.addEventListener('touchstart', handleTouchStart, { passive: false });
+        }
+        
+        // También permitir desde el item completo (pero no desde botones)
+        item.addEventListener('touchstart', handleTouchStartItem, { passive: false });
         item.addEventListener('touchmove', handleTouchMove, { passive: false });
         item.addEventListener('touchend', handleTouchEnd);
     });
@@ -300,16 +320,42 @@ function handleDragEnd(e) {
 }
 
 /**
- * Maneja el inicio del touch (táctil)
+ * Maneja el inicio del touch desde el drag-handle
  */
 function handleTouchStart(e) {
-    // Solo permitir drag desde el drag-handle o el elemento principal
+    e.preventDefault();
+    e.stopPropagation();
+    
     const touch = e.touches[0];
     touchStartY = touch.clientY;
     touchStartX = touch.clientX;
+    isDragging = false;
+    
+    // Buscar el prize-item padre
+    draggedElement = e.target.closest('.prize-item');
+    if (draggedElement) {
+        draggedElement.style.transition = 'none';
+    }
+}
+
+/**
+ * Maneja el inicio del touch desde el item completo
+ */
+function handleTouchStartItem(e) {
+    // No activar si es un botón o un input
+    if (e.target.tagName === 'BUTTON' || 
+        e.target.tagName === 'INPUT' ||
+        e.target.closest('button')) {
+        return;
+    }
+    
+    const touch = e.touches[0];
+    touchStartY = touch.clientY;
+    touchStartX = touch.clientX;
+    isDragging = false;
     
     draggedElement = this;
-    this.classList.add('dragging');
+    draggedElement.style.transition = 'none';
 }
 
 /**
@@ -318,23 +364,37 @@ function handleTouchStart(e) {
 function handleTouchMove(e) {
     if (!draggedElement) return;
     
-    e.preventDefault();
-    
     const touch = e.touches[0];
     const currentY = touch.clientY;
+    const currentX = touch.clientX;
     
-    // Encontrar elemento bajo el dedo
-    const elementBelow = document.elementFromPoint(touch.clientX, currentY);
-    const prizeItemBelow = elementBelow?.closest('.prize-item');
+    // Calcular distancia movida
+    const deltaY = Math.abs(currentY - touchStartY);
+    const deltaX = Math.abs(currentX - touchStartX);
     
-    // Remover clases previas
-    document.querySelectorAll('.prize-item').forEach(item => {
-        item.classList.remove('drag-over');
-    });
+    // Solo iniciar drag si se movió más que el umbral
+    if (!isDragging && (deltaY > dragThreshold || deltaX > dragThreshold)) {
+        isDragging = true;
+        draggedElement.classList.add('dragging');
+        e.preventDefault();
+    }
     
-    // Agregar clase al elemento bajo el dedo
-    if (prizeItemBelow && prizeItemBelow !== draggedElement) {
-        prizeItemBelow.classList.add('drag-over');
+    if (isDragging) {
+        e.preventDefault();
+        
+        // Encontrar elemento bajo el dedo
+        const elementBelow = document.elementFromPoint(currentX, currentY);
+        const prizeItemBelow = elementBelow?.closest('.prize-item');
+        
+        // Remover clases previas
+        document.querySelectorAll('.prize-item').forEach(item => {
+            item.classList.remove('drag-over');
+        });
+        
+        // Agregar clase al elemento bajo el dedo
+        if (prizeItemBelow && prizeItemBelow !== draggedElement) {
+            prizeItemBelow.classList.add('drag-over');
+        }
     }
 }
 
@@ -344,20 +404,27 @@ function handleTouchMove(e) {
 function handleTouchEnd(e) {
     if (!draggedElement) return;
     
-    const touch = e.changedTouches[0];
-    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    const prizeItemBelow = elementBelow?.closest('.prize-item');
-    
-    if (prizeItemBelow && prizeItemBelow !== draggedElement) {
-        reorderPrizeItems(draggedElement, prizeItemBelow);
+    if (isDragging) {
+        const touch = e.changedTouches[0];
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        const prizeItemBelow = elementBelow?.closest('.prize-item');
+        
+        if (prizeItemBelow && prizeItemBelow !== draggedElement) {
+            reorderPrizeItems(draggedElement, prizeItemBelow);
+        }
     }
     
-    draggedElement.classList.remove('dragging');
+    if (draggedElement) {
+        draggedElement.classList.remove('dragging');
+        draggedElement.style.transition = '';
+    }
+    
     document.querySelectorAll('.prize-item').forEach(item => {
         item.classList.remove('drag-over');
     });
     
     draggedElement = null;
+    isDragging = false;
 }
 
 /**

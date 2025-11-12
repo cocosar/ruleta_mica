@@ -241,6 +241,8 @@ h2 {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    position: relative;
+    overflow: visible;
 }
 
 .empty-message {
@@ -265,10 +267,19 @@ h2 {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    touch-action: pan-y;
+    -webkit-touch-callout: none;
 }
 
 .prize-item:active {
     cursor: grabbing;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    /* Estilos específicos para dispositivos táctiles */
+    .prize-item {
+        cursor: default;
+    }
 }
 
 .prize-item.dragging {
@@ -292,10 +303,29 @@ h2 {
     padding: 0 5px;
     line-height: 1;
     letter-spacing: -2px;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .drag-handle:active {
     cursor: grabbing;
+    color: var(--primary-color);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    /* Táctil: hacer el drag handle más grande */
+    .drag-handle {
+        font-size: 2rem;
+        min-width: 50px;
+        min-height: 50px;
+        padding: 0 10px;
+        cursor: default;
+    }
 }
 
 .prize-order-controls {
